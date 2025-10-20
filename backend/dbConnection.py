@@ -12,6 +12,7 @@ engine = create_engine(database_url)  # type: ignore
 # create database models here as needed
 def create_database():
     SQLModel.metadata.create_all(engine)
+    print("✅ Database created successfully!")
 
 
 # Dependency to get a session
