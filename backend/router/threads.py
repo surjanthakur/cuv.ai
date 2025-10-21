@@ -23,8 +23,9 @@ def get_thread(id: str, session_db: Session = Depends(get_session)):
     try:
         thread = session_db.get(Thread, id)
         if not thread:
-            raise HTTPException(status_code=404, detail="Thread not found")
-        return thread
+            raise HTTPException(status_code=404, detail="oops! Thread not found")
+        else:
+            return thread
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
 
