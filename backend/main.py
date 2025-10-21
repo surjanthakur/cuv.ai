@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from dbConnection import create_database
+from router import threads
 
 
 # Define the lifespan event to create the database on startup
@@ -11,3 +12,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+# include the threads routes
+app.include_router(threads.router)
