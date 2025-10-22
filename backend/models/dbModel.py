@@ -11,6 +11,6 @@ class Message(SQLModel, table=True):
 class Thread(SQLModel, table=True):
     thread_id: int = Field(default=None, primary_key=True)
     title: str = Field(default="new thread")
-    messages: Message = Field(default=[])
+    messages: Message
     createdAt: datetime = Field(default_factory=datetime.now)
     updatedAt: datetime = Field(default_factory=datetime.now)
