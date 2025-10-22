@@ -3,6 +3,7 @@ from sqlmodel import Session, select
 from dbConnection import get_session
 from models.dbModel import Thread, Message
 from datetime import datetime
+import uuid
 
 
 router = APIRouter(tags=["chats"])
@@ -57,7 +58,7 @@ def create_chat(id: str, message: str, session_db: Session = Depends(get_session
             newThread = Thread(
                 threadId=id,
                 title=message,
-                messages=[Message(role="user", content=message, thread_id=id)],
+                messages=[Message(id=str(uuid.uuid4()), role="user", content=message)],
             )
             session_db.add(newThread)
             session_db.commit()
@@ -66,7 +67,6 @@ def create_chat(id: str, message: str, session_db: Session = Depends(get_session
             newMessage = Message(
                 role="user",
                 content=message,
-                thread_id=thread.threadId,
             )
             session_db.add(newMessage)
             thread.updatedAt = datetime.now()

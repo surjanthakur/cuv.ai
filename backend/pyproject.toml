@@ -8,6 +8,7 @@ dependencies = [
     "fastapi[standard]>=0.119.0",
     "langchain>=0.3.27",
     "langgraph>=0.6.10",
+    "psycopg2>=2.9.11",
     "python-dotenv>=1.1.1",
     "sqlmodel>=0.0.27",
 ]

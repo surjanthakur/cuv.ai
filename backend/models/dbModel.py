@@ -4,6 +4,7 @@ from typing import List
 
 
 class Message(SQLModel, table=True):
+    id: str = Field(default=None, primary_key=True)
     role: str
     content: str
     timestamp: datetime = Field(default_factory=datetime.now)
