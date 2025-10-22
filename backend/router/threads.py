@@ -45,7 +45,21 @@ def delete_thread(id: str, session_db: Session = Depends(get_session)):
 
 
 @router.post("/chats")
-def create_chat(
-    thread_id: str, message: str, session_db: Session = Depends(get_session)
-):
-    pass
+def create_chat(id: str, message: str, session_db: Session = Depends(get_session)):
+    if not id and not message:
+        raise HTTPException(
+            status_code=400, detail="Thread ID and message are required"
+        )
+    try:
+        thread = session_db.get(Thread, id)
+        if not thread:
+            new_thread = Thread(
+                threadId=id,
+                title=message,
+            )
+            session_db.add(new_thread)
+            session_db.commit()
+            session_db.refresh(new_thread)
+    except Exception as err:
+
+        raise HTTPException(status_code=500, detail=str(err))
