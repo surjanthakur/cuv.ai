@@ -7,6 +7,7 @@ class Message(SQLModel, table=True):
     role: str
     content: str
     timestamp: datetime = Field(default_factory=datetime.now)
+    thread_id: str | None = Field(default=None, foreign_key="thread.threadId")
     thread: "Thread" = Relationship(back_populates="messages")
 
 

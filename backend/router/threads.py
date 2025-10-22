@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from dbConnection import get_session
-from models.dbModel import Thread
+from models.dbModel import Thread, Message
+from datetime import datetime
 
 
 router = APIRouter(tags=["chats"])
@@ -46,20 +47,33 @@ def delete_thread(id: str, session_db: Session = Depends(get_session)):
 
 @router.post("/chats")
 def create_chat(id: str, message: str, session_db: Session = Depends(get_session)):
-    if not id and not message:
+    if not id or not message:
         raise HTTPException(
             status_code=400, detail="Thread ID and message are required"
         )
     try:
         thread = session_db.get(Thread, id)
         if not thread:
-            new_thread = Thread(
+            newThread = Thread(
                 threadId=id,
                 title=message,
+                messages=[Message(role="user", content=message, thread_id=id)],
             )
-            session_db.add(new_thread)
+            session_db.add(newThread)
             session_db.commit()
-            session_db.refresh(new_thread)
+            session_db.refresh(newThread)
+        else:
+            newMessage = Message(
+                role="user",
+                content=message,
+                thread_id=thread.threadId,
+            )
+            session_db.add(newMessage)
+            thread.updatedAt = datetime.now()
+            session_db.add(thread)
+            session_db.commit()
+            session_db.refresh(thread)
+
     except Exception as err:
 
         raise HTTPException(status_code=500, detail=str(err))
