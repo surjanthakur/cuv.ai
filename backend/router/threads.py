@@ -42,3 +42,10 @@ def delete_thread(id: str, session_db: Session = Depends(get_session)):
         return {"detail": "Thread deleted successfully"}
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
+
+
+@router.post("/chats")
+def create_chat(
+    thread_id: str, message: str, session_db: Session = Depends(get_session)
+):
+    pass
