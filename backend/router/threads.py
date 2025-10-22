@@ -75,5 +75,4 @@ def create_chat(id: str, message: str, session_db: Session = Depends(get_session
             session_db.refresh(thread)
 
     except Exception as err:
-
         raise HTTPException(status_code=500, detail=str(err))
