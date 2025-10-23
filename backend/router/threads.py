@@ -4,7 +4,7 @@ from dbConnection import get_session
 from models.dbModel import Thread, Message
 from datetime import datetime
 import uuid
-from llmResponse import handle_llm_response
+from .llmResponse import handle_llm_response
 
 
 router = APIRouter(tags=["chats"])
