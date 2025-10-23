@@ -4,6 +4,7 @@ from dbConnection import get_session
 from models.dbModel import Thread, Message
 from datetime import datetime
 import uuid
+from llmResponse import handle_llm_response
 
 
 router = APIRouter(tags=["chats"])
@@ -65,14 +66,18 @@ def create_chat(id: str, message: str, session_db: Session = Depends(get_session
             session_db.refresh(newThread)
         else:
             newMessage = Message(
+                id=str(uuid.uuid4()),
                 role="user",
                 content=message,
+                timestamp=datetime.now(),
             )
-            session_db.add(newMessage)
+            thread.messages.append(newMessage)
             thread.updatedAt = datetime.now()
             session_db.add(thread)
             session_db.commit()
             session_db.refresh(thread)
+
+        assistantReply = handle_llm_response(message)
 
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
