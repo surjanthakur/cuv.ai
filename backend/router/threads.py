@@ -59,7 +59,14 @@ def create_chat(id: str, message: str, session_db: Session = Depends(get_session
             newThread = Thread(
                 threadId=id,
                 title=message,
-                messages=[Message(id=str(uuid.uuid4()), role="user", content=message)],
+                messages=[
+                    Message(
+                        id=str(uuid.uuid4()),
+                        role="user",
+                        content=message,
+                        timestamp=datetime.now(),
+                    )
+                ],
             )
             session_db.add(newThread)
             session_db.commit()
@@ -78,6 +85,18 @@ def create_chat(id: str, message: str, session_db: Session = Depends(get_session
             session_db.refresh(thread)
 
         assistantReply = handle_llm_response(message)
+        llmMsg = Message(
+            id=str(uuid.uuid4()),
+            role="assistant",
+            content=str(assistantReply),
+            timestamp=datetime.now(),
+        )
+        if thread:
+            thread.messages.append(llmMsg)
+            return llmMsg
+        else:
+            newThread.messages.append(llmMsg)
+            return llmMsg
 
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
