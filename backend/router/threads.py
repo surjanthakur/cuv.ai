@@ -93,9 +93,15 @@ def create_chat(id: str, message: str, session_db: Session = Depends(get_session
         )
         if thread:
             thread.messages.append(llmMsg)
+            session_db.add(thread)
+            session_db.commit()
+            session_db.refresh(thread)
             return llmMsg
         else:
             newThread.messages.append(llmMsg)
+            session_db.add(newThread)
+            session_db.commit()
+            session_db.refresh(newThread)
             return llmMsg
 
     except Exception as err:
