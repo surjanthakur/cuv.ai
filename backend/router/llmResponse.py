@@ -23,4 +23,4 @@ def handle_llm_response(message):
         stop=None,
         tools=[{"type": "browser_search"}, {"type": "code_interpreter"}],
     )
-    return completion.choices[0].message
+    return completion.choices[0].message.content

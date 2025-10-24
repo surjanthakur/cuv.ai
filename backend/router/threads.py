@@ -67,10 +67,13 @@ def create_chat(id: str, message: str, session_db: Session = Depends(get_session
                         timestamp=datetime.now(),
                     )
                 ],
+                updatedAt=datetime.now(),
+                createdAt=datetime.now(),
             )
             session_db.add(newThread)
             session_db.commit()
             session_db.refresh(newThread)
+            thread = newThread
         else:
             newMessage = Message(
                 id=str(uuid.uuid4()),
@@ -84,25 +87,22 @@ def create_chat(id: str, message: str, session_db: Session = Depends(get_session
             session_db.commit()
             session_db.refresh(thread)
 
+        # 🚀 Generate LLM response
         assistantReply = handle_llm_response(message)
+
+        # 💬 Save assistant reply
         llmMsg = Message(
             id=str(uuid.uuid4()),
             role="assistant",
             content=str(assistantReply),
             timestamp=datetime.now(),
         )
-        if thread:
-            thread.messages.append(llmMsg)
-            session_db.add(thread)
-            session_db.commit()
-            session_db.refresh(thread)
-            return llmMsg
-        else:
-            newThread.messages.append(llmMsg)
-            session_db.add(newThread)
-            session_db.commit()
-            session_db.refresh(newThread)
-            return llmMsg
+        thread.messages.append(llmMsg)
+        thread.updatedAt = datetime.now()
+        session_db.add(thread)
+        session_db.commit()
+        session_db.refresh(thread)
+        return {"llm_response": assistantReply}
 
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
