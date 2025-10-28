@@ -17,4 +17,10 @@ class Thread(SQLModel, table=True):
     title: str = Field(default="new thread")
     createdAt: datetime = Field(default_factory=datetime.now)
     updatedAt: datetime = Field(default_factory=datetime.now)
-    messages: List[Message] = Relationship(back_populates="thread")
+    messages: List[Message] = Relationship(
+        back_populates="thread",
+        sa_relationship_kwargs={
+            "cascade": "all, delete",
+            "passive_deletes": True,
+        },
+    )
