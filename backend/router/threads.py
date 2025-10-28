@@ -42,7 +42,7 @@ def delete_thread(id: str, session_db: Session = Depends(get_session)):
             raise HTTPException(status_code=404, detail="Thread not found")
         session_db.delete(thread)
         session_db.commit()
-        return {"detail": "Thread deleted successfully"}
+        return {"detail": "Thread deleted successfully✅"}
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
 
